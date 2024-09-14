@@ -126,6 +126,21 @@ def sum_expense_for_month(month):
     
     # print the total amount for the month
     print(f"Total amount of expenses for {month_name}: ${total_amount:.2f}")
+def sum_expense_for_category(category):
+    csv_file = CSV_FILE     
+
+    # read csv
+    df = pd.read_csv(csv_file)
+    
+    # filter by category
+    df_filtered = df[df['category'] == category]
+    
+    # calculate the sum of the 'amount' column for the filtered category
+    total_amount = df_filtered['amount'].sum()
+    
+    # print the total amount for the category
+    print(f"Total amount of expenses for category '{category}': ${total_amount:.2f}")
+
 
 def main():   
     # creates csv if not exist
@@ -141,7 +156,7 @@ def main():
     add_parser = subparsers.add_parser('add', help='Add a new expense')
     add_parser.add_argument('--description', "-d", type=str, help='The description of the expense.')
     add_parser.add_argument('--amount', "-a", type=float, help=f'The amount, in dollars, of the expense.', default=0.0)
-    add_parser.add_argument('--category', "-c", type=str, help=f'The catagory of the expense', default="general")
+    add_parser.add_argument('--category', "-c", type=str, help=f'The category of the expense', default="general")
 
     # Delete command
     add_parser = subparsers.add_parser('delete', help='Delete expenses')
@@ -153,6 +168,7 @@ def main():
     # Add command
     add_parser = subparsers.add_parser('sum', help='Summary of expenses')
     add_parser.add_argument('--month', "-m", type=int, help=f'Summary of expenses for a month. Use double digit months, i.e. 03 for March')
+    add_parser.add_argument('--category', "-c", type=str, help=f'Summary of expenses by category.')
 
     # Parse the arguments
     args = parser.parse_args()
@@ -167,6 +183,8 @@ def main():
     elif args.command == "sum":
         if(args.month):
             sum_expense_for_month(args.month)
+        elif(args.category):
+            sum_expense_for_category(args.category)
         else:
             sum_expense()
     else:
